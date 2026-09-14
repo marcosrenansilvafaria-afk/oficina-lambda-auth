@@ -103,6 +103,19 @@ sequenceDiagram
   permissão de logs e de gerenciar ENIs (para operar dentro da VPC) — nenhuma
   permissão de leitura em Secrets Manager/SSM, já que a função não os chama
   em runtime.
+- **Dead Letter Queue (SQS)**: falhas de invocação assíncrona vão para uma
+  fila SQS Standard, dentro do free tier (1M requisições/mês, gratuito).
+
+### Trade-offs de custo/escopo aceitos (`checkov`)
+
+| Check | Recomendação | Por que não aplicamos agora |
+|---|---|---|
+| `CKV_AWS_272` | Code signing (AWS Signer) | Exige Signing Profile + Code Signing Config extras; complexidade desproporcional para este projeto |
+| `CKV_AWS_173` | KMS CMK nas env vars da Lambda | Já criptografado com a chave gerenciada padrão da AWS; CMK própria tem custo mensal adicional |
+| `CKV_AWS_290` / `CKV_AWS_355` | Evitar `Resource: "*"` na policy IAM | Ações de ENI da EC2 (`ec2:CreateNetworkInterface` etc) não suportam ARN específico — mesmo padrão da policy gerenciada `AWSLambdaVPCAccessExecutionRole` |
+| `CKV_AWS_338` | Retenção de logs >= 1 ano | 7 dias é suficiente para debug em um projeto de estudo; retenção maior só aumenta custo de armazenamento |
+| `CKV_AWS_158` | KMS CMK nos CloudWatch Log Groups | Mesmo motivo do `CKV_AWS_173` — custo mensal adicional por chave |
+| `CKV_AWS_309` | Autorização na rota `/auth` | É a própria rota de login — precisa ser pública para o cliente obter um token |
 
 ## Schema consumido
 

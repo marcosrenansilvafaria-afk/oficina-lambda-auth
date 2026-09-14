@@ -36,6 +36,7 @@ resource "aws_apigatewayv2_integration" "auth" {
 }
 
 resource "aws_apigatewayv2_route" "auth" {
+  #checkov:skip=CKV_AWS_309: Esta e a propria rota de login/autenticacao - precisa ser publica para o cliente obter um token antes de existir qualquer credencial para autorizar a chamada.
   api_id    = aws_apigatewayv2_api.auth.id
   route_key = "POST /auth"
   target    = "integrations/${aws_apigatewayv2_integration.auth.id}"
