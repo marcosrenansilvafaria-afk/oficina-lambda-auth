@@ -11,6 +11,8 @@
 # VPC privada, o que teria custo mensal real nao coberto pelo free tier.
 # A troca: rotacionar a senha exige um novo `terraform apply`.
 resource "aws_secretsmanager_secret" "db_credentials" {
+  #checkov:skip=CKV2_AWS_57: Rotacao automatica exigiria uma Lambda de rotacao dedicada - complexidade desproporcional para um segredo que e apenas um espelho, atualizado a cada terraform apply.
+  #checkov:skip=CKV_AWS_149: Chave gerenciada pela AWS (aws/secretsmanager) ja criptografa o segredo por padrao; CMK customizada tem custo mensal adicional (~US$1/mes).
   name        = "oficina/${var.environment}/lambda-auth/db-credentials"
   description = "Credenciais de conexao com o RDS PostgreSQL, espelhadas do Repositorio 1 para uso pelo Repositorio 2 (Lambda de autenticacao)"
 

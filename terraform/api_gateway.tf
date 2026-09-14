@@ -24,6 +24,8 @@ resource "aws_apigatewayv2_stage" "default" {
 }
 
 resource "aws_cloudwatch_log_group" "api_gateway" {
+  #checkov:skip=CKV_AWS_338: Retencao de 1 ano aumentaria custo de armazenamento sem beneficio real para um projeto de estudo/demonstracao. 7 dias e suficiente para debug.
+  #checkov:skip=CKV_AWS_158: Criptografia com CMK customizada tem custo mensal adicional (~US$1/mes por chave). O log group ja e criptografado com a chave gerenciada pela AWS por padrao.
   name              = "/aws/apigateway/oficina-${var.environment}-lambda-auth"
   retention_in_days = var.log_retention_days
 }

@@ -18,6 +18,7 @@ resource "aws_cloudwatch_log_group" "lambda" {
 resource "aws_sqs_queue" "lambda_dlq" {
   name                      = "oficina-${var.environment}-lambda-auth-dlq"
   message_retention_seconds = 1209600 # 14 dias (maximo do SQS)
+  sqs_managed_sse_enabled   = true    # criptografia com chave gerenciada pela AWS, sem custo adicional
 
   tags = {
     Name = "oficina-${var.environment}-lambda-auth-dlq"
@@ -82,6 +83,15 @@ resource "aws_iam_role_policy" "lambda_exec" {
         Effect   = "Allow"
         Action   = "sqs:SendMessage"
         Resource = aws_sqs_queue.lambda_dlq.arn
+      },
+      {
+        Sid    = "XRayTracing"
+        Effect = "Allow"
+        Action = [
+          "xray:PutTraceSegments",
+          "xray:PutTelemetryRecords",
+        ]
+        Resource = "*"
       }
     ]
   })
@@ -100,6 +110,17 @@ resource "aws_lambda_function" "auth" {
 
   memory_size = var.lambda_memory_size
   timeout     = var.lambda_timeout
+
+  # Limite de concorrencia: protege contra custo inesperado em caso de abuso/loop
+  # de chamadas (ex: cliente com retry agressivo), sem custo adicional para
+  # configurar.
+  reserved_concurrent_executions = var.lambda_reserved_concurrency
+
+  # X-Ray tracing: gratuito ate 100.000 traces/mes (bem acima do volume
+  # esperado deste projeto), util para depurar latencia/erros end-to-end.
+  tracing_config {
+    mode = "Active"
+  }
 
   dead_letter_config {
     target_arn = aws_sqs_queue.lambda_dlq.arn

@@ -51,6 +51,12 @@ variable "lambda_timeout" {
   default     = 10
 }
 
+variable "lambda_reserved_concurrency" {
+  description = "Limite de execuções concorrentes reservadas para a Lambda (protege contra custo inesperado em caso de abuso/loop de chamadas)."
+  type        = number
+  default     = 5
+}
+
 variable "log_retention_days" {
   description = "Dias de retenção dos logs no CloudWatch Logs (custo de armazenamento proporcional ao período)."
   type        = number
