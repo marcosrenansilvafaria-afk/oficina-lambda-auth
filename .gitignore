@@ -1,0 +1,22 @@
+# Node
+node_modules/
+dist/
+coverage/
+*.log
+npm-debug.log*
+
+# Terraform
+terraform/**/.terraform/*
+terraform/**/*.tfstate
+terraform/**/*.tfstate.*
+terraform/**/*.tfplan
+terraform/**/.terraformrc
+terraform/**/terraform.rc
+terraform/**/*.tfvars
+!terraform/**/terraform.tfvars.example
+terraform/**/lambda.zip
+
+# OS / editores
+.DS_Store
+.vscode/
+*.swp

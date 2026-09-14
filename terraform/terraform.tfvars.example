@@ -1,0 +1,16 @@
+# Copie este arquivo para terraform/terraform.tfvars e ajuste os valores.
+#
+# IMPORTANTE: NUNCA preencha "jwt_secret" aqui nem em nenhum arquivo
+# versionado. Forneca exclusivamente via variavel de ambiente TF_VAR_jwt_secret
+# (execucao local) ou GitHub Secrets (CI/CD).
+
+aws_region      = "us-east-1"
+environment     = "development"
+db_state_bucket = "oficina-tfstate-699372251061"
+
+# jwt_secret -> NAO definir aqui. Usar TF_VAR_jwt_secret.
+jwt_expires_in = "1h"
+
+lambda_memory_size = 128
+lambda_timeout     = 10
+log_retention_days = 7
