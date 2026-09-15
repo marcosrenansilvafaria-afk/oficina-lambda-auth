@@ -100,6 +100,7 @@ resource "aws_iam_role_policy" "lambda_exec" {
 resource "aws_lambda_function" "auth" {
   #checkov:skip=CKV_AWS_272: Code signing (AWS Signer) exige criar um Signing Profile e um Code Signing Config extras, complexidade desproporcional para um projeto de estudo/demonstracao com deploy via CI confiavel (branch protection + OIDC).
   #checkov:skip=CKV_AWS_173: As variaveis de ambiente ja sao criptografadas em repouso pela chave gerenciada padrao da AWS (aws/lambda). Uma CMK customizada teria custo mensal adicional (~US$1/mes).
+  #checkov:skip=CKV_AWS_115: Esta conta AWS tem um limite TOTAL de concorrencia de apenas 10 execucoes simultaneas (bem abaixo do padrao de 1000) - reservar qualquer valor para esta funcao e rejeitado pela API (InvalidParameterValueException) por deixar menos de 10 nao-reservadas na conta. Confirmado em producao.
   function_name = "oficina-${var.environment}-lambda-auth"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "handler.handler"
