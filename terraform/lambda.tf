@@ -111,10 +111,11 @@ resource "aws_lambda_function" "auth" {
   memory_size = var.lambda_memory_size
   timeout     = var.lambda_timeout
 
-  # Limite de concorrencia: protege contra custo inesperado em caso de abuso/loop
-  # de chamadas (ex: cliente com retry agressivo), sem custo adicional para
-  # configurar.
-  reserved_concurrent_executions = var.lambda_reserved_concurrency
+  # Sem reserved_concurrent_executions: esta conta AWS tem um limite total de
+  # concorrencia muito baixo (10 execucoes simultaneas na conta inteira,
+  # bem abaixo do padrao de 1000), e a API rejeita reservar qualquer valor
+  # que deixe menos de 10 nao-reservadas. Como o limite da conta ja e baixo
+  # por si so, a reserva perde a utilidade pratica aqui.
 
   # X-Ray tracing: gratuito ate 100.000 traces/mes (bem acima do volume
   # esperado deste projeto), util para depurar latencia/erros end-to-end.
